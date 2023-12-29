@@ -1,7 +1,7 @@
 import requests
 import argparse
 from tqdm import tqdm
-
+from bs4 import BeautifulSoup
 
 TRACKS = {
     'bayshorenorthbound': 'Bayshore Northbound',
@@ -36,8 +36,37 @@ def main():
 
 def obtain_data(name='Jonathan', leaderboard=None, track=None):
     #https://hub.shutokorevivalproject.com/timing?leaderboard=Default&stage=Bayshore%20Northbound&track=shuto_revival_project_beta&page=1&month=0
-    url = 'https://hub.shutokorevivalproject.com/timing'  
+    url = 'https://hub.shutokorevivalproject.com/timing'
     
+    # if track and leaderboard:
+    #     params = {
+    #         'leaderboard': leaderboard,
+    #         'stage': track 
+    #     }
+    #     res = requests.get(url, params)
+    # elif track:
+    #     params = {
+    #         'leaderboard': leaderboard,
+    #         'stage': track 
+    #     }
+    #     res = requests.get(url, params)
+
+    # else:
+    for track_value in TRACKS.values():
+        params = {
+            'leaderboard': leaderboard if leaderboard else 'Default',
+            'stage': track_value,
+            'page': 0,
+            'month': 0
+        }
+        res = requests.get(url, params)
+        soup = BeautifulSoup(res.text, features="html.parser")
+        for i in soup.find_all('tr'):
+            print(i.get_text())
+        break
+        
+
+        
 
 if __name__ == '__main__':
     main()
