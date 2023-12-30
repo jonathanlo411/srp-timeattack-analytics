@@ -12,6 +12,8 @@ This information was found on https://hub.shutokorevivalproject.com/timing/point
 ==================
 """
 
+ERROR_MSG = lambda name: f'We could not find {name} on the points leaderboard.'
+
 def main():
     # Parse Args
     parser = argparse.ArgumentParser()
@@ -32,8 +34,10 @@ def main():
         }
         res = requests.get(url, opts)
         if res.status_code != 200:
+            print(ERROR_MSG(name))
             break
         if res.text == last:
+            print(ERROR_MSG(name))
             break
 
         # Parse
