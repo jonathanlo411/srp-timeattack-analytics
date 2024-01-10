@@ -3,14 +3,14 @@ import requests
 import argparse
 from bs4 import BeautifulSoup
 
-LOG_MSG = lambda name, place, points, page, duration, spm: f"""
+LOG_MSG = lambda name, place, points, page, duration, spm, l: f"""
 ==================
 Name: {name}
 Place: {place}
 Score: {points}
 Duration: {duration}
 Score Per Minute: {spm}
-This information was found on https://hub.shutokorevivalproject.com/timing/points?page={page}&month=0.
+This information was found on https://hub.shutokorevivalproject.com/overtake?leaderboard={l}&page={page}.
 ==================
 """
 
@@ -31,9 +31,10 @@ def main():
     while True:
         # Request
         url = 'https://hub.shutokorevivalproject.com/overtake'
+        leaderboard = "TrafficSlow" if args.slow else "Default"
         opts = {
             "page": i,
-            "leaderboard": "TrafficSlow" if args.slow else "Default",
+            "leaderboard": leaderboard,
             "month": 0
         }
         res = requests.get(url, opts)
@@ -55,7 +56,7 @@ def main():
                 points = re.findall(pattern, str(items[j + 4]))[0]
                 duration = re.findall(pattern, str(items[j + 2]))[0]
                 spm = re.findall(pattern, str(items[j + 3]))[0]
-                print(LOG_MSG(name, place, points, i, duration, spm))
+                print(LOG_MSG(name, place, points, i, duration, spm, leaderboard))
                 break
         else:
             i += 1
